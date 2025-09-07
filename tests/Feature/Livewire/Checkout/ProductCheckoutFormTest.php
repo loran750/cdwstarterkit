@@ -186,6 +186,7 @@ class ProductCheckoutFormTest extends FeatureTest
 
         // get number of orders before checkout
         $ordersBefore = Order::count();
+        $tenantsBefore = Tenant::count();
 
         Event::fake();
 
@@ -202,6 +203,8 @@ class ProductCheckoutFormTest extends FeatureTest
         $latestOrder = Order::latest('id')->first();
         $this->assertEquals(OrderStatus::SUCCESS->value, $latestOrder->status);
         $this->assertEquals(true, $latestOrder->is_local);
+
+        $this->assertEquals($tenantsBefore + 1, Tenant::count());
 
     }
 
