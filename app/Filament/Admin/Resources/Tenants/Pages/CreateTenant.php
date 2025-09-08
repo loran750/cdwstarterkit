@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\Tenants\Pages;
 
+use App\Events\Tenant\TenantCreated;
 use App\Filament\Admin\Resources\Tenants\TenantResource;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Str;
@@ -15,5 +16,10 @@ class CreateTenant extends CreateRecord
         $data['uuid'] = Str::uuid();
 
         return $data;
+    }
+
+    protected function afterCreate()
+    {
+        TenantCreated::dispatch($this->record, auth()->user());
     }
 }
