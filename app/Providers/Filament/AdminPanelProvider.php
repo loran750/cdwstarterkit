@@ -71,7 +71,7 @@ class AdminPanelProvider extends PanelProvider
                     ->icon('heroicon-s-rocket-launch')
                     ->collapsed(),
                 NavigationGroup::make()
-                    ->label(__('Tenancy'))
+                    ->label(fn () => __('Tenancy'))
                     ->icon('heroicon-s-home')
                     ->collapsed(),
                 NavigationGroup::make()
