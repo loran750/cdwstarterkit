@@ -279,4 +279,14 @@ class TransactionResource extends Resource
     {
         return __('Transactions');
     }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('Transactions');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __('Transaction');
+    }
 }

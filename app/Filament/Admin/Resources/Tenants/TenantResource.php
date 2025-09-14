@@ -29,6 +29,21 @@ class TenantResource extends Resource
         return __('Tenancy');
     }
 
+    public static function getNavigationLabel(): string
+    {
+        return __('Tenants');
+    }
+
+    public static function getPluralLabel(): string
+    {
+        return __('Tenants');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __('Tenant');
+    }
+
     public static function form(Schema $schema): Schema
     {
         return $schema

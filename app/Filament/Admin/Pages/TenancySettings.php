@@ -24,4 +24,9 @@ class TenancySettings extends Page
     {
         return __('Tenancy');
     }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('Settings');
+    }
 }
