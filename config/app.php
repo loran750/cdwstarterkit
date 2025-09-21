@@ -187,6 +187,8 @@ return [
 
     'recaptcha_enabled' => env('RECAPTCHA_ENABLED', false),
 
+    'otp_login_enabled' => env('OTP_LOGIN_ENABLED', false),
+
     'tenant_multiple_subscriptions_enabled' => env('TENANT_MULTIPLE_SUBSCRIPTIONS_ENABLED', false),
     'can_add_tenant_specific_roles_from_tenant_dashboard' => env('CAN_ADD_TENANT_SPECIFIC_ROLES_FROM_TENANT_DASHBOARD', false),
 

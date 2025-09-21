@@ -137,8 +137,9 @@ class ConfigConstants
         // Cookie Consent
         'cookie-consent.enabled',
 
-        // Two Factor Auth
+        // Authentication & Security
         'app.two_factor_auth_enabled',
+        'app.otp_login_enabled',
 
         // Subscription Trial
         'app.trial_without_payment.enabled',
