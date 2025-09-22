@@ -540,10 +540,12 @@ class ConvertLocalSubscriptionCheckoutFormTest extends FeatureTest
         $user = User::factory()->create();
         $this->actingAs($user);
 
+        $tenant = $this->createTenant();
         $subscription = Subscription::factory()->create([
             'user_id' => $user->id,
             'status' => SubscriptionStatus::ACTIVE,
             'type' => SubscriptionType::LOCALLY_MANAGED,
+            'tenant_id' => $tenant->id,
         ]);
 
         $planSlug = 'premium-plan-'.rand(1, 1000000);
@@ -606,10 +608,12 @@ class ConvertLocalSubscriptionCheckoutFormTest extends FeatureTest
         $user = User::factory()->create();
         $this->actingAs($user);
 
+        $tenant = $this->createTenant();
         $subscription = Subscription::factory()->create([
             'user_id' => $user->id,
             'status' => SubscriptionStatus::ACTIVE,
             'type' => SubscriptionType::LOCALLY_MANAGED,
+            'tenant_id' => $tenant->id,
         ]);
 
         $planSlug = 'premium-plan-'.rand(1, 1000000);
@@ -678,10 +682,12 @@ class ConvertLocalSubscriptionCheckoutFormTest extends FeatureTest
         $user = User::factory()->create();
         $this->actingAs($user);
 
+        $tenant = $this->createTenant();
         $subscription = Subscription::factory()->create([
             'user_id' => $user->id,
             'status' => SubscriptionStatus::ACTIVE,
             'type' => SubscriptionType::LOCALLY_MANAGED,
+            'tenant_id' => $tenant->id,
         ]);
 
         $planSlug = 'premium-plan-'.rand(1, 1000000);
@@ -747,10 +753,12 @@ class ConvertLocalSubscriptionCheckoutFormTest extends FeatureTest
         $user = User::factory()->create();
         $this->actingAs($user);
 
+        $tenant = $this->createTenant();
         $subscription = Subscription::factory()->create([
             'user_id' => $user->id,
             'status' => SubscriptionStatus::ACTIVE,
             'type' => SubscriptionType::LOCALLY_MANAGED,
+            'tenant_id' => $tenant->id,
         ]);
 
         $planSlug = 'premium-plan-'.rand(1, 1000000);
