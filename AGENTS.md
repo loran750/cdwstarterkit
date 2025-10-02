@@ -4,14 +4,15 @@ This file provides guidance to AI agents working on the SaaSykit project, includ
 
 ## Project Overview
 
-SaaSykit is a Laravel-based SaaS starter kit built with the TALL stack (Tailwind CSS, Alpine.js, Laravel, Livewire). It provides a complete SaaS boilerplate with subscription management, payment processing, admin panels, and user dashboards powered by Filament.
+SaaSykit Tenancy is a  multi-tenant Laravel-based SaaS starter kit built with the TALL stack (Tailwind CSS, Alpine.js, Laravel, Livewire). It provides a complete SaaS boilerplate with subscription management, payment processing, admin panels, and user dashboards powered by Filament.
 
-SaaSykit is a SaaS starter kit (boilerplate) that comes packed with all components required to run a modern SaaS software.
+SaaSykit Tenancy is a SaaS starter kit (boilerplate) that comes packed with all components required to run a modern SaaS software.
 
-SaaSykit is built with the TALL stack (Tailwind CSS, Alpine.js, Laravel, Livewire), and offers an intuitive Filament admin panel that houses all the pre-built components like product, plans, discounts, payment providers, email providers, transactions, blog, user & role management, and much more.
+SaaSykit Tenancy is built with the TALL stack (Tailwind CSS, Alpine.js, Laravel, Livewire), and offers an intuitive Filament admin panel that houses all the pre-built components like product, plans, discounts, payment providers, email providers, transactions, blog, user & role management, and much more.
 
 ### Features in a nutshell
 
+* Multi-tenancy (SaaSykit Tenancy): Build multi-tenancy applications, seat-based subscriptions with a seamless checkout experience.
 * Customize Styles: Customize the styles & colors, error page of your application to fit your brand.
 * Product, Plans & Pricing: Create and manage your products, plans, and pricing from a beautiful and easy-to-use admin panel.
 * Beautiful checkout process: Your customers can subscribe to your plans from a beautiful checkout process.
@@ -112,6 +113,7 @@ SaaSykit is built with the TALL stack (Tailwind CSS, Alpine.js, Laravel, Livewir
 
 ### Core Domain Models
 Key models representing the business domain:
+- **Tenant** - Tenants (for multi-tenancy)
 - **User** - Users with roles, permissions, subscriptions
 - **Product** - Products (subscription-based SaaS offerings)
 - **Plan** - Subscription plans with pricing tiers
@@ -137,6 +139,10 @@ Key models representing the business domain:
 
 ### Service Layer
 The application uses a service layer pattern. Key services:
+- `TenantService` - Tenant management
+- `TenantSubscriptionService` - Tenant subscription handling
+- `TenantPermissionService` - Tenant roles/permissions
+- `TenantCreationService` - Tenant onboarding
 - `SubscriptionService` - Subscription lifecycle management
 - `OrderService` - Order processing
 - `CheckoutService` - Checkout flow logic
