@@ -25,6 +25,7 @@ class Plan extends Model
         'is_active',
         'type',
         'max_users_per_tenant',
+        'is_visible',
     ];
 
     public function product(): BelongsTo
