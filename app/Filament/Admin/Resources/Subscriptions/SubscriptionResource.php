@@ -16,7 +16,6 @@ use App\Mapper\SubscriptionStatusMapper;
 use App\Models\Subscription;
 use App\Services\CurrencyService;
 use App\Services\SubscriptionService;
-use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
@@ -152,7 +151,6 @@ class SubscriptionResource extends Resource
             ])
             ->recordActions([
                 ViewAction::make(),
-                EditAction::make(),
             ])
             ->headerActions([
 
