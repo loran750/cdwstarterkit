@@ -2,13 +2,13 @@
 
 namespace App\Services;
 
-use App\Models\User;
+use App\Models\Tenant;
 
 class AddressService
 {
-    public function userHasAddressInfo(User $user): bool
+    public function tenantHasAddressInfo(Tenant $tenant): bool
     {
-        $address = $user->address()->first();
+        $address = $tenant->address()->first();
 
         if (! $address) {
             return false;

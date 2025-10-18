@@ -73,8 +73,8 @@ class TransactionResource extends Resource
                     ->icon('heroicon-o-document')
                     ->visible(fn (Transaction $record, InvoiceService $invoiceService): bool => $invoiceService->canGenerateInvoices($record))
                     ->modalDescription(function (AddressService $addressService) {
-                        if (! $addressService->userHasAddressInfo(auth()->user())) {
-                            return __('Your address information is not complete. It is recommended to complete your address information before generating an invoice. Are you sure you want to proceed?');
+                        if (! $addressService->tenantHasAddressInfo(Filament::getTenant())) {
+                            return __('Organization address information is not complete. It is recommended to complete your address information before generating an invoice. Are you sure you want to proceed?');
                         }
 
                         return null;

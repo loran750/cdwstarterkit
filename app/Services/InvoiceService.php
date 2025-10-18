@@ -5,8 +5,8 @@ namespace App\Services;
 use App\Constants\InvoiceStatus;
 use App\Constants\TransactionStatus;
 use App\Models\Invoice as InvoiceEntity;
+use App\Models\Tenant;
 use App\Models\Transaction;
-use App\Models\User;
 use Exception;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
@@ -75,7 +75,7 @@ class InvoiceService
                 );
         }
 
-        $customFields = $this->addAddressInfo($transaction->user, $customFields);
+        $customFields = $this->addAddressInfo($transaction->tenant, $customFields);
 
         $customer = new Buyer([
             'name' => $transaction->user->name,
@@ -122,9 +122,9 @@ class InvoiceService
         return $invoice->stream();
     }
 
-    private function addAddressInfo(User $user, array $customFields): array
+    private function addAddressInfo(Tenant $tenant, array $customFields): array
     {
-        $address = $user->address()->first();
+        $address = $tenant->address()->first();
 
         if (! $address) {
             return $customFields;

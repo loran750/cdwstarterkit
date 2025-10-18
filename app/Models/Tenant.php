@@ -58,4 +58,9 @@ class Tenant extends Model
     {
         return $this->hasMany(Role::class);
     }
+
+    public function address(): HasOne
+    {
+        return $this->hasOne(Address::class);
+    }
 }
