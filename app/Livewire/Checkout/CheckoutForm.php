@@ -149,7 +149,7 @@ class CheckoutForm extends Component
             'name' => $this->name,
             'email' => $this->email,
             'password' => $this->password,
-        ]);
+        ], true);
 
         auth()->login($user);
 
@@ -241,7 +241,7 @@ class CheckoutForm extends Component
             $user = $userService->createUser([
                 'name' => $this->name,
                 'email' => $this->email,
-            ]);
+            ], true);
         }
 
         if (! $oneTimePasswordService->sendCode($user)) {

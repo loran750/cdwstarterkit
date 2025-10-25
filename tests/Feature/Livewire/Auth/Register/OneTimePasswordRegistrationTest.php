@@ -68,7 +68,7 @@ class OneTimePasswordRegistrationTest extends FeatureTest
         $this->mockUserService
             ->shouldReceive('createUser')
             ->once()
-            ->with($userFields)
+            ->with($userFields, true)
             ->andReturn($user);
 
         $this->mockOtpService
@@ -147,7 +147,7 @@ class OneTimePasswordRegistrationTest extends FeatureTest
         $this->mockUserService
             ->shouldReceive('createUser')
             ->once()
-            ->with($userFields)
+            ->with($userFields, true)
             ->andReturn($user);
 
         $this->mockOtpService
@@ -196,7 +196,7 @@ class OneTimePasswordRegistrationTest extends FeatureTest
         $this->mockUserService
             ->shouldReceive('createUser')
             ->once()
-            ->with($userFields)
+            ->with($userFields, true)
             ->andReturn($user);
 
         $this->mockOtpService
@@ -246,7 +246,7 @@ class OneTimePasswordRegistrationTest extends FeatureTest
         $this->mockUserService
             ->shouldReceive('createUser')
             ->once()
-            ->with($userFields)
+            ->with($userFields, true)
             ->andReturn($user);
 
         $this->mockOtpService
