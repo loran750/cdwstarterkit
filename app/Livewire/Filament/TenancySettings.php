@@ -35,6 +35,7 @@ class TenancySettings extends Component implements HasForms
             'allow_tenant_invitations' => $this->configService->get('app.allow_tenant_invitations', false),
             'tenant_multiple_subscriptions_enabled' => $this->configService->get('app.tenant_multiple_subscriptions_enabled', false),
             'can_add_tenant_specific_roles_from_tenant_dashboard' => $this->configService->get('app.can_add_tenant_specific_roles_from_tenant_dashboard', false),
+            'create_tenant_on_user_registration' => $this->configService->get('app.create_tenant_on_user_registration', false),
         ]);
     }
 
@@ -56,6 +57,10 @@ class TenancySettings extends Component implements HasForms
                             ->label(__('Allow Adding Tenant Specific Roles from Tenant Dashboard'))
                             ->helperText(__('If enabled, tenant admins can add roles that are specific to their tenant. If disabled, only tenant roles defined in the admin dashboard can be assigned to tenant users.'))
                             ->required(),
+                        Toggle::make('create_tenant_on_user_registration')
+                            ->label(__('Auto Create Tenant on User Registration'))
+                            ->helperText(__('If enabled, a tenant will be automatically created when a new user registers. This is useful for SaaS applications where you want to allow users to user their dashboard without needing to purchase a product (as normally a tenant is created only when a user purchases).'))
+                            ->required(),
                     ]),
 
             ])
@@ -69,6 +74,7 @@ class TenancySettings extends Component implements HasForms
         $this->configService->set('app.allow_tenant_invitations', $data['allow_tenant_invitations']);
         $this->configService->set('app.tenant_multiple_subscriptions_enabled', $data['tenant_multiple_subscriptions_enabled']);
         $this->configService->set('app.can_add_tenant_specific_roles_from_tenant_dashboard', $data['can_add_tenant_specific_roles_from_tenant_dashboard']);
+        $this->configService->set('app.create_tenant_on_user_registration', $data['create_tenant_on_user_registration']);
 
         Notification::make()
             ->title(__('Settings Saved'))

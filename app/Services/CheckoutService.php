@@ -6,6 +6,7 @@ use App\Constants\OrderStatus;
 use App\Constants\PlanType;
 use App\Dto\CartDto;
 use App\Dto\TotalsDto;
+use App\Models\Tenant;
 
 class CheckoutService
 {
@@ -15,13 +16,9 @@ class CheckoutService
         private TenantCreationService $tenantCreationService,
     ) {}
 
-    public function initSubscriptionCheckout(string $planSlug, ?string $tenantUuid, int $quantity = 1)
+    public function initSubscriptionCheckout(string $planSlug, ?string $tenantUuid, int $quantity = 1, bool $shouldCreateNewTenant = false)
     {
-        $tenant = $this->tenantCreationService->findUserTenantForNewSubscriptionByUuid(auth()->user(), $tenantUuid);
-
-        if ($tenant === null) {
-            $tenant = $this->tenantCreationService->createTenant(auth()->user());
-        }
+        $tenant = $this->resolveSubscriptionTenant($shouldCreateNewTenant, $tenantUuid);
 
         $subscription = $this->subscriptionService->findNewByPlanSlugAndTenant($planSlug, $tenant);
         if ($subscription === null) {
@@ -42,13 +39,9 @@ class CheckoutService
         return $subscription;
     }
 
-    public function initLocalSubscriptionCheckout(string $planSlug, ?string $tenantUuid, int $quantity = 1)
+    public function initLocalSubscriptionCheckout(string $planSlug, ?string $tenantUuid, int $quantity = 1, bool $shouldCreateNewTenant = false)
     {
-        $tenant = $this->tenantCreationService->findUserTenantForNewSubscriptionByUuid(auth()->user(), $tenantUuid);
-
-        if ($tenant === null) {
-            $tenant = $this->tenantCreationService->createTenant(auth()->user());
-        }
+        $tenant = $this->resolveSubscriptionTenant($shouldCreateNewTenant, $tenantUuid);
 
         $subscription = $this->subscriptionService->findNewByPlanSlugAndTenant($planSlug, $tenant);
         if ($subscription === null) {
@@ -69,16 +62,25 @@ class CheckoutService
         return $subscription;
     }
 
-    public function initProductCheckout(CartDto $cartDto, ?string $tenantUuid, TotalsDto $totalsDto)
+    public function initProductCheckout(CartDto $cartDto, ?string $tenantUuid, TotalsDto $totalsDto, bool $shouldCreateNewTenant = false)
     {
         $user = auth()->user();
 
         $isLocalOrder = $totalsDto->amountDue === 0; // If amount due is zero, it's a local order (no payment provider needed)
 
-        $tenant = $this->tenantCreationService->findUserTenantForNewOrderByUuid($user, $tenantUuid);
-
-        if ($tenant === null) {
+        if ($shouldCreateNewTenant) {
             $tenant = $this->tenantCreationService->createTenant($user);
+        } else {
+            $tenant = $this->tenantCreationService->findUserTenantForNewOrderByUuid($user, $tenantUuid);
+
+            if ($tenant === null) {
+                // just find any tenant user can use
+                $tenant = $this->tenantCreationService->findUserTenantForNewOrder($user);
+
+                if ($tenant === null) {
+                    $tenant = $this->tenantCreationService->createTenant($user);
+                }
+            }
         }
 
         $order = null;
@@ -98,5 +100,25 @@ class CheckoutService
         }
 
         return $order;
+    }
+
+    public function resolveSubscriptionTenant(bool $shouldCreateNewTenant, ?string $tenantUuid): Tenant
+    {
+        if ($shouldCreateNewTenant) {
+            $tenant = $this->tenantCreationService->createTenant(auth()->user());
+        } else {
+            $tenant = $this->tenantCreationService->findUserTenantForNewSubscriptionByUuid(auth()->user(), $tenantUuid);
+
+            if ($tenant === null) {
+                // just find any tenant user can use
+                $tenant = $this->tenantCreationService->findUserTenantForNewSubscription(auth()->user());
+
+                if ($tenant === null) {
+                    $tenant = $this->tenantCreationService->createTenant(auth()->user());
+                }
+            }
+        }
+
+        return $tenant;
     }
 }

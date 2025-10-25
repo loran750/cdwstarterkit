@@ -21,7 +21,9 @@ class CreateTenantIfNeeded
      */
     public function handle(Registered $event): void
     {
-        if ($this->sessionService->shouldCreateTenantForFreePlanUser()) {
+        if ($this->sessionService->shouldCreateTenantForFreePlanUser() ||
+            config('app.create_tenant_on_user_registration', false)
+        ) {
             $this->tenantCreationService->createTenantForFreePlanUser($event->user);
             $this->sessionService->resetCreateTenantForFreePlanUser();
         }

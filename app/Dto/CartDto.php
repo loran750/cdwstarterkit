@@ -12,4 +12,6 @@ class CartDto
     public ?string $orderId = null;
 
     public ?string $tenantUuid = null;
+
+    public bool $shouldCreateNewTenant = false;
 }

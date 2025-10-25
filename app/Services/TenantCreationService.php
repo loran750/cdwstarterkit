@@ -28,6 +28,14 @@ class TenantCreationService
         );
     }
 
+    public function findUserTenantForNewOrder(User $user)
+    {
+        return $this->tenantPermissionService->filterTenantsWhereUserHasPermission(
+            $user->tenants()->get(),
+            TenancyPermissionConstants::PERMISSION_CREATE_ORDERS
+        )->first();
+    }
+
     public function findUserTenantForNewOrderByUuid(User $user, ?string $tenantUuid): ?Tenant
     {
         if ($tenantUuid === null) {
@@ -59,6 +67,16 @@ class TenantCreationService
             })->get(),
             TenancyPermissionConstants::PERMISSION_CREATE_SUBSCRIPTIONS
         );
+    }
+
+    public function findUserTenantForNewSubscription(User $user)
+    {
+        return $this->tenantPermissionService->filterTenantsWhereUserHasPermission(
+            $user->tenants()->whereDoesntHave('subscriptions', function ($query) {
+                $query->whereIn('status', SubscriptionConstants::SUBSCRIPTION_STATUS_THAT_ARE_NOT_DEAD);
+            })->get(),
+            TenancyPermissionConstants::PERMISSION_CREATE_SUBSCRIPTIONS
+        )->first();
     }
 
     public function findUserTenantForNewSubscriptionByUuid(User $user, ?string $tenantUuid): ?Tenant

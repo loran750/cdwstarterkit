@@ -49,6 +49,7 @@ class ProductTenantPicker extends Component
         }
 
         $cartDto = $this->sessionService->getCartDto();
+        $cartDto->shouldCreateNewTenant = empty($value);
         $cartDto->tenantUuid = $value;
         $this->sessionService->saveCartDto($cartDto);
     }
