@@ -539,7 +539,7 @@ class ProductCheckoutFormTest extends FeatureTest
             ->with($email)
             ->andReturn(null);
         $mockUserService->shouldReceive('createUser')
-            ->with(['name' => $name, 'email' => $email])
+            ->with(['name' => $name, 'email' => $email], true)
             ->andReturn($newUser);
 
         $mockRegisterValidator = Mockery::mock(RegisterValidator::class);
@@ -769,7 +769,7 @@ class ProductCheckoutFormTest extends FeatureTest
             ->with($email)
             ->andReturn(null);
         $mockUserService->shouldReceive('createUser')
-            ->with(['name' => $name, 'email' => $email])
+            ->with(['name' => $name, 'email' => $email], true)
             ->andReturn($newUser);
 
         $mockRegisterValidator = Mockery::mock(RegisterValidator::class);
