@@ -49,6 +49,7 @@ class SubscriptionTenantPicker extends Component
         }
 
         $subscriptionCheckoutDto = $this->sessionService->getSubscriptionCheckoutDto();
+        $subscriptionCheckoutDto->shouldCreateNewTenant = empty($value);
         $subscriptionCheckoutDto->tenantUuid = $value;
         $this->sessionService->saveSubscriptionCheckoutDto($subscriptionCheckoutDto);
     }

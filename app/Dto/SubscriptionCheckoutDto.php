@@ -13,4 +13,6 @@ class SubscriptionCheckoutDto
     public int $quantity = 1;
 
     public ?string $tenantUuid = null;
+
+    public bool $shouldCreateNewTenant = false;
 }

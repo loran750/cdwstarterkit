@@ -64,7 +64,7 @@ class OneTimePasswordRegistration extends Component
             return;
         }
 
-        $user = $this->userService->createUser($userFields);
+        $user = $this->userService->createUser($userFields, true);
 
         if (! $this->oneTimePasswordService->sendCode($user)) {
             $this->addError('email', __('Failed to send one-time password. Please try again later.'));

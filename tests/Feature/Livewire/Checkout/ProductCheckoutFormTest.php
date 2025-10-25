@@ -21,6 +21,7 @@ use App\Services\SessionService;
 use App\Services\UserService;
 use App\Validator\LoginValidator;
 use App\Validator\RegisterValidator;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Support\Facades\Event;
 use Livewire\Livewire;
@@ -32,6 +33,8 @@ class ProductCheckoutFormTest extends FeatureTest
 {
     public function test_can_checkout_new_user()
     {
+        Event::fake();
+
         $product = OneTimeProduct::factory()->create([
             'slug' => 'product-slug-6',
             'is_active' => true,
@@ -67,6 +70,8 @@ class ProductCheckoutFormTest extends FeatureTest
             ->set('paymentProvider', 'paymore')
             ->call('checkout')
             ->assertRedirect('http://paymore.com/checkout');
+
+        Event::assertDispatched(Registered::class);
 
         // assert user has been created
         $this->assertDatabaseHas('users', [
@@ -250,6 +255,8 @@ class ProductCheckoutFormTest extends FeatureTest
 
     public function test_can_checkout_overlay_payment()
     {
+        Event::fake();
+
         $product = OneTimeProduct::factory()->create([
             'slug' => 'product-slug-8',
             'is_active' => true,
@@ -284,6 +291,8 @@ class ProductCheckoutFormTest extends FeatureTest
             ->set('paymentProvider', 'paymore')
             ->call('checkout')
             ->assertDispatched('start-overlay-checkout');
+
+        Event::assertDispatched(Registered::class);
 
         // assert user has been created
         $this->assertDatabaseHas('users', [
@@ -342,6 +351,8 @@ class ProductCheckoutFormTest extends FeatureTest
 
     public function test_can_checkout_offline_payment()
     {
+        Event::fake();
+
         $slug = 'product-slug-'.str()->random(5);
         $product = OneTimeProduct::factory()->create([
             'slug' => $slug,
@@ -377,6 +388,8 @@ class ProductCheckoutFormTest extends FeatureTest
             ->call('checkout')
             ->assertRedirectToRoute('checkout.product.success');
 
+        Event::assertDispatched(Registered::class);
+
         // assert user has been created
         $this->assertDatabaseHas('users', [
             'email' => 'something3@gmail.com',
@@ -397,6 +410,8 @@ class ProductCheckoutFormTest extends FeatureTest
 
     public function test_can_checkout_quantity()
     {
+        Event::fake();
+
         $slug = 'product-slug-'.str()->random(5);
         $product = OneTimeProduct::factory()->create([
             'slug' => $slug,
@@ -433,6 +448,8 @@ class ProductCheckoutFormTest extends FeatureTest
             ->set('paymentProvider', 'paymore-offline')
             ->call('checkout')
             ->assertRedirectToRoute('checkout.product.success');
+
+        Event::assertDispatched(Registered::class);
 
         // assert user has been created
         $this->assertDatabaseHas('users', [
@@ -552,7 +569,7 @@ class ProductCheckoutFormTest extends FeatureTest
             ->with($email)
             ->andReturn(null);
         $mockUserService->shouldReceive('createUser')
-            ->with(['name' => $name, 'email' => $email])
+            ->with(['name' => $name, 'email' => $email], true)
             ->andReturn($newUser);
 
         $mockRegisterValidator = Mockery::mock(RegisterValidator::class);
@@ -782,7 +799,7 @@ class ProductCheckoutFormTest extends FeatureTest
             ->with($email)
             ->andReturn(null);
         $mockUserService->shouldReceive('createUser')
-            ->with(['name' => $name, 'email' => $email])
+            ->with(['name' => $name, 'email' => $email], true)
             ->andReturn($newUser);
 
         $mockRegisterValidator = Mockery::mock(RegisterValidator::class);

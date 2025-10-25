@@ -95,7 +95,12 @@ class LocalSubscriptionCheckoutForm extends CheckoutForm
         }
 
         try {
-            $subscription = $checkoutService->initLocalSubscriptionCheckout($planSlug, $subscriptionCheckoutDto->tenantUuid, $subscriptionCheckoutDto->quantity);
+            $subscription = $checkoutService->initLocalSubscriptionCheckout(
+                $planSlug,
+                $subscriptionCheckoutDto->tenantUuid,
+                $subscriptionCheckoutDto->quantity,
+                $subscriptionCheckoutDto->shouldCreateNewTenant,
+            );
         } catch (SubscriptionCreationNotAllowedException $e) {
             return redirect()->route('checkout.subscription.already-subscribed');
         }

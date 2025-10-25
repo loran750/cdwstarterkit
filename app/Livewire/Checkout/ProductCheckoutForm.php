@@ -76,7 +76,13 @@ class ProductCheckoutForm extends CheckoutForm
         $user = auth()->user();
         $totals = $this->calculationService->calculateCartTotals($cartDto, $user);
 
-        $order = $checkoutService->initProductCheckout($cartDto, $cartDto->tenantUuid, $totals);
+        $order = $checkoutService->initProductCheckout(
+            $cartDto,
+            $cartDto->tenantUuid,
+            $totals,
+            $cartDto->shouldCreateNewTenant,
+        );
+
         $cartDto->orderId = $order->id;
 
         $this->sessionService->saveCartDto($cartDto);

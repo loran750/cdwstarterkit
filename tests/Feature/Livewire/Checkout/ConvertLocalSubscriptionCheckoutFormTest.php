@@ -815,7 +815,7 @@ class ConvertLocalSubscriptionCheckoutFormTest extends FeatureTest
             ->with([
                 'email' => $email,
                 'name' => $name,
-            ])
+            ], true)
             ->andReturn($user);
 
         $mockOtpService
