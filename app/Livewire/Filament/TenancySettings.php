@@ -47,7 +47,7 @@ class TenancySettings extends Component implements HasForms
                     ->schema([
                         Toggle::make('allow_tenant_invitations')
                             ->label(__('Allow Tenant Invitations'))
-                            ->helperText(__('If enabled, tenants users with an "admin" tenant role will be able to invite users to their tenant.'))
+                            ->helperText(__('If enabled, tenant users with an "admin" tenant role will be able to invite users to their tenant.'))
                             ->required(),
                         Toggle::make('tenant_multiple_subscriptions_enabled')
                             ->label(__('Allow Multiple Subscriptions Per Tenant'))
@@ -59,7 +59,7 @@ class TenancySettings extends Component implements HasForms
                             ->required(),
                         Toggle::make('create_tenant_on_user_registration')
                             ->label(__('Auto Create Tenant on User Registration'))
-                            ->helperText(__('If enabled, a tenant will be automatically created when a new user registers. This is useful for SaaS applications where you want to allow users to user their dashboard without needing to purchase a product (as normally a tenant is created only when a user purchases).'))
+                            ->helperText(__('If enabled, a tenant will be automatically created when a new user registers. This is useful for SaaS applications where you want to allow users to use their dashboard without needing to purchase a product (as normally a tenant is created only when a user purchases).'))
                             ->required(),
                     ]),
 
