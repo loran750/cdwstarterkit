@@ -27,6 +27,7 @@ class LemonSqueezyControllerTest extends FeatureTest
         ]);
 
         $response->assertStatus(400);
+        $response->assertJson(['error' => 'Invalid signature']);
     }
 
     public function test_subscription_created_webhook(): void
