@@ -9,6 +9,7 @@ use App\Filament\Admin\Resources\PaymentProviders\Pages\PaddleSettings;
 use App\Filament\Admin\Resources\PaymentProviders\Pages\StripeSettings;
 use App\Models\PaymentProvider;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
@@ -57,6 +58,12 @@ class PaymentProviderResource extends Resource
                         ->label(__('Enabled for new payments'))
                         ->helperText(__('If disabled, this payment provider will not be shown on the checkout page, but will still be available for existing subscriptions and receiving webhooks.'))
                         ->required(),
+                    Select::make('country')
+                        ->label(__('For countries in'))
+                        ->options(
+                            collect(json_decode(file_get_contents(resource_path('data/countries.json')), true))
+                                ->pluck('name', 'code')
+                        )
                 ])->columnSpanFull(),
             ]);
     }
@@ -70,9 +77,9 @@ class PaymentProviderResource extends Resource
                     ->label(__('Icon'))
                     ->getStateUsing(function (PaymentProvider $record) {
                         return new HtmlString(
-                            '<div class="flex gap-2">'.
-                            ' <img src="'.asset('images/payment-providers/'.$record->slug.'.png').'" alt="'.$record->name.'" class="h-6"> '
-                            .'</div>'
+                            '<div class="flex gap-2">' .
+                                ' <img src="' . asset('images/payment-providers/' . $record->slug . '.png') . '" alt="' . $record->name . '" class="h-6"> '
+                                . '</div>'
                         );
                     }),
                 TextColumn::make('name')->label(__('Name')),
@@ -83,6 +90,8 @@ class PaymentProviderResource extends Resource
                     ->label(__('Active')),
                 ToggleColumn::make('is_enabled_for_new_payments')
                     ->label(__('Enabled for new payments')),
+                TextColumn::make('country')
+                    ->label(__('For countries in'))
             ])
             ->filters([
                 //
@@ -90,8 +99,7 @@ class PaymentProviderResource extends Resource
             ->recordActions([
                 EditAction::make(),
             ])
-            ->toolbarActions([
-            ])
+            ->toolbarActions([])
             ->defaultSort('sort', 'asc');
     }
 

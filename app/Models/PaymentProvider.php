@@ -15,6 +15,7 @@ class PaymentProvider extends Model
         'type',
         'slug',
         'sort',
+        'country',
         'is_enabled_for_new_payments',
     ];
 }
