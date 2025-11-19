@@ -11,6 +11,7 @@ use App\Mapper\InvitationStatusMapper;
 use App\Models\Invitation;
 use App\Services\TenantPermissionService;
 use App\Services\TenantService;
+use BackedEnum;
 use Closure;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
@@ -20,6 +21,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -30,9 +32,11 @@ class InvitationResource extends Resource
 {
     protected static ?string $model = Invitation::class;
 
+    protected static string|null|BackedEnum $navigationIcon = Heroicon::Plus;
+
     public static function getNavigationGroup(): ?string
     {
-        return __('Team');
+        return __('Team Management');
     }
 
     public static function form(Schema $schema): Schema
@@ -75,15 +79,21 @@ class InvitationResource extends Resource
                     })
                     ->default(TenancyPermissionConstants::ROLE_USER)
                     ->label(__('Role'))
-                    ->required()
                     ->helperText(__('Choose the role for this user.')),
+                Select::make('team_id')
+                    ->label(__('Team'))
+                    ->visible(fn (): bool => config('app.teams_enabled', false))
+                    ->helperText(__('Select the team to which the user will be invited.'))
+                    ->options(function () {
+                        return Filament::getTenant()->teams()->pluck('name', 'id')->toArray();
+                    }),
             ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
-            ->description(__('Send invitations to your team members.'))
+            ->description(__('Send invitations to people to join your workspace.'))
             ->columns([
                 TextColumn::make('email')
                     ->searchable(),
@@ -99,8 +109,17 @@ class InvitationResource extends Resource
                     ->formatStateUsing(function ($state, InvitationStatusMapper $invitationStatusMapper) {
                         return $invitationStatusMapper->mapForDisplay($state);
                     }),
+                TextColumn::make('team_id')
+                    ->label(__('Team'))
+                    ->default('-')
+                    ->formatStateUsing(function ($state, $record) {
+                        return $record->team?->name ?? '-';
+                    })
+                    ->visible(fn (): bool => config('app.teams_enabled', false))
+                    ->sortable(),
                 TextColumn::make('role')
                     ->label(__('Role'))
+                    ->default('-')
                     ->formatStateUsing(function ($state) {
                         return Str::of($state)->title();
                     })
@@ -163,7 +182,7 @@ class InvitationResource extends Resource
 
     public static function getNavigationLabel(): string
     {
-        return __('Invite People');
+        return __('Invitations');
     }
 
     public static function getEloquentQuery(): Builder

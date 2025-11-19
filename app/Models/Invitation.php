@@ -19,6 +19,7 @@ class Invitation extends Model
         'user_id',  // this is the user that created the invitation (the inviter)
         'status',
         'role',
+        'team_id',
     ];
 
     public function tenant()
@@ -29,5 +30,10 @@ class Invitation extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function team()
+    {
+        return $this->belongsTo(Team::class);
     }
 }

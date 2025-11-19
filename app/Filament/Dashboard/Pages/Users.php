@@ -6,19 +6,23 @@ use App\Constants\TenancyPermissionConstants;
 use App\Services\TenantPermissionService;
 use Filament\Facades\Filament;
 use Filament\Pages\Page;
+use Filament\Support\Icons\Heroicon;
+use BackedEnum;
 
-class Team extends Page
+class Users extends Page
 {
-    protected string $view = 'filament.dashboard.pages.team';
+    protected string $view = 'filament.dashboard.pages.users';
+
+    protected static string|null|BackedEnum $navigationIcon = Heroicon::OutlinedUsers;
 
     public static function getNavigationGroup(): ?string
     {
-        return __('Team');
+        return __('Team Management');
     }
 
     public static function getNavigationLabel(): string
     {
-        return __('Team Members');
+        return __('Users');
     }
 
     public static function canAccess(): bool
