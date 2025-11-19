@@ -59,6 +59,13 @@ class TenantPermissionService
         // Merge both permission collections
         $allPermissions = $tenantPermissions->merge($globalPermissions)->unique('id');
 
+        if (config('app.teams_enabled')) {
+            // Get team-based permissions
+            foreach ($tenantUser->teams as $team) {
+                $allPermissions = $allPermissions->merge($team->getAllPermissions())->unique('id');
+            }
+        }
+
         if ($allPermissions->count() === 0) {
             self::$permissionCache[$tenant->id][$user->id] = false;
 
@@ -129,7 +136,7 @@ class TenantPermissionService
             ->first();
     }
 
-    public function getAllAvailableTenantRolesForDisplay(Tenant $tenant): array
+    public function getAllAvailableTenantRolesForDisplay(Tenant $tenant, bool $useIdAsIdentifier = false): array
     {
         $roles = Role::query()
             ->withoutGlobalScope(filament()->getTenancyScopeName())  // to avoid the filament tenancy scope to get global roles as well
@@ -138,12 +145,13 @@ class TenantPermissionService
                 $query->whereNull('tenant_id')
                     ->orWhere('tenant_id', $tenant->id);
             })
-            ->pluck('name')
+            ->pluck('name', $useIdAsIdentifier ? 'id' : 'name')
             ->toArray();
 
         $result = [];
-        foreach ($roles as $role) {
-            $result[$role] = Str::title($role);
+        foreach ($roles as $identifier => $role) {
+            $id = $useIdAsIdentifier ? $identifier : $role;
+            $result[$id] = Str::title($role);
         }
 
         return $result;

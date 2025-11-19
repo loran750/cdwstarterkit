@@ -16,7 +16,7 @@
             <table class="table">
                 <thead>
                     <tr>
-                        <th>{{ __('Team') }}</th>
+                        <th>{{ __('Workspace') }}</th>
                         <th>{{ __('Inviter') }}</th>
                         <th class="text-end">{{ __('Actions') }}</th>
                     </tr>

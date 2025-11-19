@@ -33,6 +33,7 @@ class TenancySettings extends Component implements HasForms
     {
         $this->form->fill([
             'allow_tenant_invitations' => $this->configService->get('app.allow_tenant_invitations', false),
+            'teams_enabled' => $this->configService->get('app.teams_enabled', false),
             'tenant_multiple_subscriptions_enabled' => $this->configService->get('app.tenant_multiple_subscriptions_enabled', false),
             'can_add_tenant_specific_roles_from_tenant_dashboard' => $this->configService->get('app.can_add_tenant_specific_roles_from_tenant_dashboard', false),
             'create_tenant_on_user_registration' => $this->configService->get('app.create_tenant_on_user_registration', false),
@@ -48,6 +49,10 @@ class TenancySettings extends Component implements HasForms
                         Toggle::make('allow_tenant_invitations')
                             ->label(__('Allow Tenant Invitations'))
                             ->helperText(__('If enabled, tenant users with an "admin" tenant role will be able to invite users to their tenant.'))
+                            ->required(),
+                        Toggle::make('teams_enabled')
+                            ->label(__('Allow Teams'))
+                            ->helperText(__('If enabled, tenant users will be able to create teams within their tenant. If disabled, the team functionality will be hidden from tenants.'))
                             ->required(),
                         Toggle::make('tenant_multiple_subscriptions_enabled')
                             ->label(__('Allow Multiple Subscriptions Per Tenant'))
@@ -72,6 +77,7 @@ class TenancySettings extends Component implements HasForms
         $data = $this->form->getState();
 
         $this->configService->set('app.allow_tenant_invitations', $data['allow_tenant_invitations']);
+        $this->configService->set('app.teams_enabled', $data['teams_enabled']);
         $this->configService->set('app.tenant_multiple_subscriptions_enabled', $data['tenant_multiple_subscriptions_enabled']);
         $this->configService->set('app.can_add_tenant_specific_roles_from_tenant_dashboard', $data['can_add_tenant_specific_roles_from_tenant_dashboard']);
         $this->configService->set('app.create_tenant_on_user_registration', $data['create_tenant_on_user_registration']);
