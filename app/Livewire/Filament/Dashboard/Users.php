@@ -3,6 +3,7 @@
 namespace App\Livewire\Filament\Dashboard;
 
 use App\Models\User;
+use App\Services\TeamService;
 use App\Services\TenantPermissionService;
 use App\Services\TenantService;
 use Filament\Actions\Action;
@@ -22,7 +23,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
 
-class Team extends Component implements HasActions, HasForms, HasTable
+class Users extends Component implements HasActions, HasForms, HasTable
 {
     use InteractsWithActions;
     use InteractsWithForms;
@@ -56,6 +57,8 @@ class Team extends Component implements HasActions, HasForms, HasTable
                     })
                     ->updateStateUsing(function (User $user, ?string $state, TenantPermissionService $tenantPermissionService) {
                         if ($state === null) {
+                            $tenantPermissionService->removeAllTenantUserRoles(Filament::getTenant(), $user);
+
                             return;
                         }
 
@@ -67,6 +70,16 @@ class Team extends Component implements HasActions, HasForms, HasTable
                             ->send();
                     })
                     ->searchable(),
+                TextColumn::make('teams')
+                    ->getStateUsing(function (User $record, TeamService $teamService) {
+                        $teams = $teamService->getUserTeams($record, Filament::getTenant())->pluck('name')->toArray();
+
+                        return implode("\n", $teams);
+                    })
+                    ->separator("\n")
+                    ->visible(fn (): bool => config('app.teams_enabled', false))
+                    ->badge()
+                    ->label(__('Team(s)')),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -112,6 +125,6 @@ class Team extends Component implements HasActions, HasForms, HasTable
 
     public function render(): View
     {
-        return view('livewire.filament.dashboard.team');
+        return view('livewire.filament.dashboard.users');
     }
 }

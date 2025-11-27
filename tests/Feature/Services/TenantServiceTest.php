@@ -5,6 +5,7 @@ namespace Tests\Feature\Services;
 use App\Constants\PlanType;
 use App\Constants\SubscriptionStatus;
 use App\Constants\TenancyPermissionConstants;
+use App\Events\Team\UserJoinedTeam;
 use App\Events\Tenant\UserJoinedTenant;
 use App\Events\Tenant\UserRemovedFromTenant;
 use App\Models\Currency;
@@ -13,12 +14,15 @@ use App\Models\PaymentProvider;
 use App\Models\Plan;
 use App\Models\PlanPrice;
 use App\Models\Subscription;
+use App\Models\Team;
 use App\Services\PaymentProviders\PaymentProviderInterface;
 use App\Services\PaymentProviders\PaymentService;
+use App\Services\TeamService;
 use App\Services\TenantPermissionService;
 use App\Services\TenantService;
 use App\Services\TenantSubscriptionService;
 use Illuminate\Support\Facades\Event;
+use Mockery;
 use Mockery\MockInterface;
 use Tests\Feature\FeatureTest;
 
@@ -63,16 +67,22 @@ class TenantServiceTest extends FeatureTest
 
         $paymentProvider->shouldReceive('updateSubscriptionQuantity')
             ->once()
-            ->with(\Mockery::any(), 2, true)
+            ->with(Mockery::any(), 2, true)
             ->andReturn(true);
 
         // get from the container
         $paymentService = app(PaymentService::class);
 
+        $teamService = Mockery::mock(TeamService::class);
+
+        $teamService->expects('addUserToTeam')
+            ->never();
+
         $permissionService = new TenantPermissionService;
         $tenantService = new TenantService(
             $permissionService,
             new TenantSubscriptionService($paymentService),
+            $teamService,
         );
 
         Event::fake();
@@ -89,6 +99,82 @@ class TenantServiceTest extends FeatureTest
 
         // make sure that the UserJoinedTenant event was dispatched
         Event::assertDispatched(UserJoinedTenant::class);
+    }
+
+    public function test_accept_invitation_with_team_assigned()
+    {
+        $tenant = $this->createTenant();
+        $inviter = $this->createUser($tenant);
+
+        $plan = Plan::factory()->create([
+            'slug' => 'plan-slug-'.uniqid(),
+            'is_active' => true,
+            'type' => PlanType::SEAT_BASED->value,
+        ]);
+
+        PlanPrice::create([
+            'plan_id' => $plan->id,
+            'currency_id' => Currency::where('code', 'USD')->first()->id,
+            'price' => 100,
+        ]);
+
+        /** @var PaymentProviderInterface|MockInterface $paymentProvider */
+        $paymentProvider = $this->addPaymentProvider();
+
+        $subscription = Subscription::factory()->create([
+            'tenant_id' => $tenant->id,
+            'status' => SubscriptionStatus::ACTIVE->value,
+            'plan_id' => $plan->id,
+            'quantity' => 1,
+            'payment_provider_id' => PaymentProvider::where('slug', 'paymore')->first()->id,
+        ]);
+
+        $invited = $this->createUser();
+
+        $team = Team::factory()->create([
+            'tenant_id' => $tenant->id,
+            'name' => 'Test Team',
+        ]);
+
+        $invitation = Invitation::factory()->create([
+            'tenant_id' => $tenant->id,
+            'user_id' => $inviter->id,
+            'email' => $invited->email,
+            'team_id' => $team->id,
+            'role' => TenancyPermissionConstants::ROLE_ADMIN,
+        ]);
+
+        $paymentProvider->shouldReceive('updateSubscriptionQuantity')
+            ->once()
+            ->with(Mockery::any(), 2, true)
+            ->andReturn(true);
+
+        // get from the container
+        $paymentService = app(PaymentService::class);
+
+        $permissionService = new TenantPermissionService;
+        $tenantService = new TenantService(
+            $permissionService,
+            new TenantSubscriptionService($paymentService),
+            new TeamService,
+        );
+
+        config(['app.teams_enabled' => true]);
+
+        Event::fake();
+
+        $result = $tenantService->acceptInvitation($invitation, $invited);
+
+        $this->assertTrue($result);
+
+        $tenantUsers = $tenant->users()->get();
+        $this->assertEquals(2, $tenantUsers->count());
+
+        $userRoles = $permissionService->getTenantUserRoles($tenant, $invited);
+        $this->assertContains(TenancyPermissionConstants::ROLE_ADMIN, $userRoles);
+
+        Event::assertDispatched(UserJoinedTenant::class);
+        Event::assertDispatched(UserJoinedTeam::class);
     }
 
     public function test_accept_invitation_flat_rate_plan()
@@ -133,10 +219,16 @@ class TenantServiceTest extends FeatureTest
         // get from the container
         $paymentService = app(PaymentService::class);
 
+        $teamService = Mockery::mock(TeamService::class);
+
+        $teamService->expects('addUserToTeam')
+            ->never();
+
         $permissionService = new TenantPermissionService;
         $tenantService = new TenantService(
             $permissionService,
             new TenantSubscriptionService($paymentService),
+            $teamService,
         );
 
         Event::fake();
@@ -198,10 +290,16 @@ class TenantServiceTest extends FeatureTest
         // get from the container
         $paymentService = app(PaymentService::class);
 
+        $teamService = Mockery::mock(TeamService::class);
+
+        $teamService->expects('addUserToTeam')
+            ->never();
+
         $permissionService = new TenantPermissionService;
         $tenantService = new TenantService(
             $permissionService,
             new TenantSubscriptionService($paymentService),
+            $teamService,
         );
 
         Event::fake();
@@ -250,11 +348,16 @@ class TenantServiceTest extends FeatureTest
 
         // get from the container
         $paymentService = app(PaymentService::class);
+        $teamService = Mockery::mock(TeamService::class);
+
+        $teamService->expects('addUserToTeam')
+            ->never();
 
         $permissionService = new TenantPermissionService;
         $tenantService = new TenantService(
             $permissionService,
             new TenantSubscriptionService($paymentService),
+            $teamService,
         );
 
         Event::fake();
@@ -306,16 +409,22 @@ class TenantServiceTest extends FeatureTest
 
         $paymentProvider->shouldReceive('updateSubscriptionQuantity')
             ->once()
-            ->with(\Mockery::any(), 1, true)
+            ->with(Mockery::any(), 1, true)
             ->andReturn(true);
 
         // get from the container
         $paymentService = app(PaymentService::class);
 
+        $teamService = Mockery::mock(TeamService::class);
+
+        $teamService->expects('addUserToTeam')
+            ->never();
+
         $permissionService = new TenantPermissionService;
         $tenantService = new TenantService(
             $permissionService,
             new TenantSubscriptionService($paymentService),
+            $teamService,
         );
 
         Event::fake();
@@ -367,10 +476,16 @@ class TenantServiceTest extends FeatureTest
         // get from the container
         $paymentService = app(PaymentService::class);
 
+        $teamService = Mockery::mock(TeamService::class);
+
+        $teamService->expects('addUserToTeam')
+            ->never();
+
         $permissionService = new TenantPermissionService;
         $tenantService = new TenantService(
             $permissionService,
             new TenantSubscriptionService($paymentService),
+            $teamService,
         );
 
         Event::fake();
@@ -396,7 +511,7 @@ class TenantServiceTest extends FeatureTest
             'type' => 'any',
         ]);
 
-        $mock = \Mockery::mock(PaymentProviderInterface::class);
+        $mock = Mockery::mock(PaymentProviderInterface::class);
 
         $mock->shouldReceive('getSlug')
             ->andReturn('paymore');

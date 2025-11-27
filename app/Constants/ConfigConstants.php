@@ -131,6 +131,7 @@ class ConfigConstants
 
         // tenancy
         'app.allow_tenant_invitations',
+        'app.teams_enabled',
         'app.tenant_multiple_subscriptions_enabled',
         'app.can_add_tenant_specific_roles_from_tenant_dashboard',
         'app.create_tenant_on_user_registration',

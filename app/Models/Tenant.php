@@ -63,4 +63,9 @@ class Tenant extends Model
     {
         return $this->hasOne(Address::class);
     }
+
+    public function teams(): HasMany
+    {
+        return $this->hasMany(Team::class);
+    }
 }

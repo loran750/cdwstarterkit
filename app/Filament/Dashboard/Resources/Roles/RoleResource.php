@@ -9,8 +9,8 @@ use App\Filament\Dashboard\Resources\Roles\Pages\ListRoles;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Services\TenantPermissionService;
+use BackedEnum;
 use Closure;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Select;
@@ -19,6 +19,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -30,9 +31,11 @@ class RoleResource extends Resource
 
     protected static bool $isScopedToTenant = false;
 
+    protected static string|null|BackedEnum $navigationIcon = Heroicon::OutlinedShieldCheck;
+
     public static function getNavigationGroup(): ?string
     {
-        return __('Team');
+        return __('Team Management');
     }
 
     public static function form(Schema $schema): Schema
@@ -98,7 +101,7 @@ class RoleResource extends Resource
                 EditAction::make(),
             ])
             ->toolbarActions([
-                DeleteBulkAction::make(),
+
             ]);
     }
 
