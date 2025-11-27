@@ -5,6 +5,7 @@ namespace Tests\Feature\Services;
 use App\Constants\TenancyPermissionConstants;
 use App\Models\Permission;
 use App\Models\Role;
+use App\Models\Team;
 use App\Services\TenantPermissionService;
 use Tests\Feature\FeatureTest;
 
@@ -93,6 +94,82 @@ class TenantPermissionServiceTest extends FeatureTest
 
         $this->assertTrue($tenantPermissionService->tenantUserHasPermissionTo($tenant, $user, TenancyPermissionConstants::PERMISSION_UPDATE_SUBSCRIPTIONS));
         $this->assertFalse($tenantPermissionService->tenantUserHasPermissionTo($tenant, $user, TenancyPermissionConstants::PERMISSION_VIEW_SUBSCRIPTIONS));
+    }
+
+    public function test_tenant_user_has_permissions_of_team_when_teams_enabled(): void
+    {
+        config(['app.teams_enabled' => true]);
+
+        $tenant = $this->createTenant();
+        $user = $this->createUser($tenant);
+
+        $team = Team::factory()->create([
+            'tenant_id' => $tenant->id,
+            'name' => 'Test Team',
+        ]);
+
+        $team->givePermissionTo([TenancyPermissionConstants::PERMISSION_UPDATE_SUBSCRIPTIONS]);
+
+        // add user to team
+        $tenantUser = $user->tenants()->where('tenant_id', $tenant->id)?->first()?->pivot;
+        $team->tenantUsers()->attach($tenantUser->id);
+
+        $this->actingAs($user);
+
+        $tenantPermissionService = new TenantPermissionService;
+
+        $this->assertTrue($tenantPermissionService->tenantUserHasPermissionTo($tenant, $user, TenancyPermissionConstants::PERMISSION_UPDATE_SUBSCRIPTIONS));
+    }
+
+    public function test_tenant_user_has_permissions_of_own_role_and_team_when_teams_enabled(): void
+    {
+        config(['app.teams_enabled' => true]);
+
+        $tenant = $this->createTenant();
+        $user = $this->createUser($tenant, [TenancyPermissionConstants::PERMISSION_VIEW_SUBSCRIPTIONS]);
+
+        $team = Team::factory()->create([
+            'tenant_id' => $tenant->id,
+            'name' => 'Test Team',
+        ]);
+
+        $team->givePermissionTo([TenancyPermissionConstants::PERMISSION_UPDATE_SUBSCRIPTIONS]);
+
+        // add user to team
+        $tenantUser = $user->tenants()->where('tenant_id', $tenant->id)?->first()?->pivot;
+        $team->tenantUsers()->attach($tenantUser->id);
+
+        $this->actingAs($user);
+
+        $tenantPermissionService = new TenantPermissionService;
+
+        $this->assertTrue($tenantPermissionService->tenantUserHasPermissionTo($tenant, $user, TenancyPermissionConstants::PERMISSION_UPDATE_SUBSCRIPTIONS));
+        $this->assertTrue($tenantPermissionService->tenantUserHasPermissionTo($tenant, $user, TenancyPermissionConstants::PERMISSION_VIEW_SUBSCRIPTIONS));
+    }
+
+    public function test_tenant_user_has_doesnt_get_permissions_of_team_when_teams_disabled(): void
+    {
+        config(['app.teams_enabled' => false]);
+
+        $tenant = $this->createTenant();
+        $user = $this->createUser($tenant);
+
+        $team = Team::factory()->create([
+            'tenant_id' => $tenant->id,
+            'name' => 'Test Team',
+        ]);
+
+        $team->givePermissionTo([TenancyPermissionConstants::PERMISSION_UPDATE_SUBSCRIPTIONS]);
+
+        // add user to team
+        $tenantUser = $user->tenants()->where('tenant_id', $tenant->id)?->first()?->pivot;
+        $team->tenantUsers()->attach($tenantUser->id);
+
+        $this->actingAs($user);
+
+        $tenantPermissionService = new TenantPermissionService;
+
+        $this->assertFalse($tenantPermissionService->tenantUserHasPermissionTo($tenant, $user, TenancyPermissionConstants::PERMISSION_UPDATE_SUBSCRIPTIONS));
     }
 
     public function test_tenant_assign_role(): void

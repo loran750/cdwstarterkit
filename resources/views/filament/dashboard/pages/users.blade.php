@@ -1,3 +1,3 @@
 <x-filament-panels::page>
-    @livewire('filament.dashboard.team')
+    @livewire('filament.dashboard.users')
 </x-filament-panels::page>

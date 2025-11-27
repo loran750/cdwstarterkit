@@ -196,6 +196,8 @@ return [
 
     'allow_tenant_invitations' => true,
 
+    'teams_enabled' => env('TEAMS_ENABLED', false),
+
     'create_tenant_on_user_registration' => env('CREATE_TENANT_ON_USER_REGISTRATION', false),
 
     'trial_without_payment' => [

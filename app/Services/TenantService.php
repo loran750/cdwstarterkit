@@ -9,6 +9,7 @@ use App\Events\Tenant\UserJoinedTenant;
 use App\Events\Tenant\UserRemovedFromTenant;
 use App\Models\Invitation;
 use App\Models\Subscription;
+use App\Models\Team;
 use App\Models\Tenant;
 use App\Models\User;
 use Exception;
@@ -21,6 +22,7 @@ class TenantService
     public function __construct(
         private TenantPermissionService $tenantPermissionService,
         private TenantSubscriptionService $tenantSubscriptionService,
+        private TeamService $teamService,
     ) {}
 
     public function acceptInvitation(Invitation $invitation, User $user): bool
@@ -67,6 +69,17 @@ class TenantService
 
                     if ($roleName) {
                         $this->tenantPermissionService->assignTenantUserRole($invitation->tenant, $user, $roleName);
+                    }
+
+                    if (config('app.teams_enabled', false) && $invitation->team_id) {
+                        // only add the user to the team if the team exists (might have been deleted in the meantime)
+                        $team = Team::where('id', $invitation->team_id)
+                            ->where('tenant_id', $invitation->tenant->id)
+                            ->first();
+
+                        if ($team) {
+                            $this->teamService->addUserToTeam($user, $team, $invitation->tenant);
+                        }
                     }
 
                     $invitation->update([
