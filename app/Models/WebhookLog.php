@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class WebhookLog extends Model
 {
+
     protected $fillable = [
         'webhook_delivery_id',
         'attempt_number',
@@ -20,6 +21,7 @@ class WebhookLog extends Model
     protected $casts = [
         'attempted_at' => 'datetime',
     ];
+    public $timestamps = false;
 
     public function delivery(): BelongsTo
     {

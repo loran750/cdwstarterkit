@@ -6,7 +6,6 @@ use App\Models\Tenant;
 use App\Models\Webhook;
 use App\Models\WebhookDelivery;
 use App\Jobs\DeliverWebhookJob;
-use Illuminate\Support\Facades\Log;
 
 class WebhookService
 {
@@ -44,11 +43,13 @@ class WebhookService
     public function triggerEvent(string $eventType, ?Tenant $tenant, array $payload): void
     {
         $webhooks = Webhook::where('is_active', true)
-            ->get()
             ->when($tenant, function ($query) use ($tenant) {
                 return $query->where('tenant_id', $tenant->id);
             })
-            ->filter(fn($webhook) => $webhook->subscribesToEvent($eventType));
+            ->get();
+        if ($eventType != '*') {
+            $webhooks->filter(fn($webhook) => $webhook->subscribesToEvent($eventType));
+        }
 
         foreach ($webhooks as $webhook) {
             $this->createDelivery($webhook, $eventType, $payload);

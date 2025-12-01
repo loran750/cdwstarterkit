@@ -36,20 +36,17 @@ class AdminPanelProvider extends PanelProvider
                 Action::make('user-dashboard')
                     ->label(__('User Dashboard'))
                     ->visible(
-                        fn () => true
+                        fn() => true
                     )
-                    ->url(fn () => route('dashboard'))
+                    ->url(fn() => route('dashboard'))
                     ->icon('heroicon-s-face-smile'),
             ])
             ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\\Filament\\Admin\\Resources')
             ->discoverPages(in: app_path('Filament/Admin/Pages'), for: 'App\\Filament\\Admin\\Pages')
             ->viteTheme('resources/css/filament/admin/theme.css')
-            ->pages([
-
-            ])
+            ->pages([])
             ->discoverWidgets(in: app_path('Filament/Admin/Widgets'), for: 'App\\Filament\\Admin\\Widgets')
-            ->widgets([
-            ])
+            ->widgets([])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
@@ -67,35 +64,40 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->navigationGroups([
                 NavigationGroup::make()
-                    ->label(fn () => (__('Revenue')))
+                    ->label(fn() => (__('Revenue')))
                     ->icon('heroicon-s-rocket-launch')
                     ->collapsed(),
                 NavigationGroup::make()
-                    ->label(fn () => __('Tenancy'))
+                    ->label(fn() => __('Tenancy'))
                     ->icon('heroicon-s-home')
                     ->collapsed(),
                 NavigationGroup::make()
-                    ->label(fn () => (__('Product Management')))
+                    ->label(fn() => (__('Product Management')))
                     ->icon('heroicon-s-shopping-cart')
                     ->collapsed(),
                 NavigationGroup::make()
-                    ->label(fn () => (__('User Management')))
+                    ->label(fn() => (__('User Management')))
                     ->icon('heroicon-s-users')
                     ->collapsed(),
                 NavigationGroup::make()
-                    ->label(fn () => (__('Settings')))
+                    ->label(fn() => (__('Settings')))
                     ->icon('heroicon-s-cog')
                     ->collapsed(),
+
                 NavigationGroup::make()
-                    ->label(fn () => (__('Announcements')))
+                    ->label(fn() => (__('System')))
+                    ->icon('heroicon-s-wrench-screwdriver')
+                    ->collapsed(),
+                NavigationGroup::make()
+                    ->label(fn() => (__('Announcements')))
                     ->icon('heroicon-s-megaphone')
                     ->collapsed(),
                 NavigationGroup::make()
-                    ->label(fn () => (__('Blog')))
+                    ->label(fn() => (__('Blog')))
                     ->icon('heroicon-s-newspaper')
                     ->collapsed(),
                 NavigationGroup::make()
-                    ->label(fn () => (__('Roadmap')))
+                    ->label(fn() => (__('Roadmap')))
                     ->icon('heroicon-s-bug-ant')
                     ->collapsed(),
             ])
