@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Notifications\Auth\QueuedVerifyEmail;
 use App\Services\OrderService;
 use App\Services\SubscriptionService;
+use App\Traits\TriggersWebhooks;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasTenants;
 use Filament\Panel;
@@ -25,7 +26,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements FilamentUser, HasTenants, MustVerifyEmail, TwoFactorAuthenticatable
 {
-    use HasApiTokens, HasFactory, HasOneTimePasswords, HasRoles, Notifiable, TwoFactorAuthentication;
+    use HasApiTokens, HasFactory, HasOneTimePasswords, HasRoles, Notifiable, TwoFactorAuthentication, TriggersWebhooks;
 
     /**
      * The attributes that are mass assignable.
@@ -188,5 +189,20 @@ class User extends Authenticatable implements FilamentUser, HasTenants, MustVeri
     public function canAccessTenant(Model $tenant): bool
     {
         return $this->tenants()->whereKey($tenant)->exists();
+    }
+
+    protected function getWebhookTenant(): ?Tenant
+    {
+        return $this->tenants()->first();
+    }
+
+    protected function getWebhookPayload(): array
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'email' => $this->email,
+            'created_at' => $this->created_at->toIso8601String(),
+        ];
     }
 }
