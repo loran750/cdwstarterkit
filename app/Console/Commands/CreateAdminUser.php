@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\User;
+use App\Services\TenantCreationService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 use Throwable;
@@ -26,7 +27,7 @@ class CreateAdminUser extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(TenantCreationService $tenantCreationService)
     {
         $email = $this->option('email');
 
@@ -47,6 +48,8 @@ class CreateAdminUser extends Command
                 'password' => bcrypt($password),
                 'is_admin' => true,
             ]);
+
+            $tenantCreationService->createTenant($user);
         } catch (Throwable $e) {
             $this->error('Error creating admin user: '.$e->getMessage());
 
