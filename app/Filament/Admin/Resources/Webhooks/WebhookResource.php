@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\Webhooks;
 
+use App\Constants\EventConstants;
 use App\Filament\Admin\Resources\Webhooks\Pages\CreateWebhook;
 use App\Filament\Admin\Resources\Webhooks\Pages\EditWebhook;
 use App\Filament\Admin\Resources\Webhooks\Pages\ListWebhooks;
@@ -77,28 +78,7 @@ class WebhookResource extends Resource
                             ->helperText(__('Select one or more events that will trigger this webhook. Use "*" to subscribe to all events.'))
                             ->options([
                                 '*' => __('All Events'),
-                                // Order Events
-                                'order.created' => __('Order Created'),
-                                'order.completed' => __('Order Completed'),
-                                'order.refunded' => __('Order Refunded'),
-                                'order.offline' => __('Order Offline'),
-                                // Subscription Events
-                                'subscription.created' => __('Subscription Created'),
-                                'subscription.updated' => __('Subscription Updated'),
-                                'subscription.cancelled' => __('Subscription Cancelled'),
-                                'subscription.renewed' => __('Subscription Renewed'),
-                                'subscription.offline' => __('Subscription Offline'),
-                                'subscription.payment_failed' => __('Invoice Payment Failed'),
-                                // Tenant Events
-                                'tenant.created' => __('Tenant Created'),
-                                'tenant.user_invited' => __('User Invited to Tenant'),
-                                'tenant.user_joined' => __('User Joined Tenant'),
-                                'tenant.user_removed' => __('User Removed from Tenant'),
-                                // User Events
-                                'user.phone_verified' => __('User Phone Verified'),
-                                'user.seen' => __('User Seen'),
-                                // Team Events
-                                'team.user_joined' => __('User Joined Team'),
+                                __('Custom Events') => EventConstants::getAllEvents()
                             ])
                             ->searchable()
                             ->preload(),
