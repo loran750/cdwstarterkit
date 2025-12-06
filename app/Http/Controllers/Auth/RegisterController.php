@@ -8,7 +8,6 @@ use App\Services\UserService;
 use App\Validator\RegisterValidator;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
 
 class RegisterController extends Controller
@@ -34,8 +33,8 @@ class RegisterController extends Controller
     //    protected $redirectTo = '/email/verify';
 
     public function __construct(
-        private RegisterValidator $registerValidator,
-        private UserService $userService,
+        protected RegisterValidator $registerValidator,
+        protected UserService $userService,
     ) {
         $this->middleware('guest');
     }
