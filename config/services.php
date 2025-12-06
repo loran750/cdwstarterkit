@@ -38,43 +38,43 @@ return [
     'google' => [
         'client_id' => env('GOOGLE_CLIENT_ID'),
         'client_secret' => env('GOOGLE_CLIENT_SECRET'),
-        'redirect' => '/auth/google/callback',
+        'redirect' => env('GOOGLE_CALLBACK', '/auth/google/callback'),
     ],
 
     'github' => [
         'client_id' => env('GITHUB_CLIENT_ID'),
         'client_secret' => env('GITHUB_CLIENT_SECRET'),
-        'redirect' => '/auth/github/callback',
+        'redirect' => env('GITHUB_CALLBACK', '/auth/github/callback'),
     ],
 
     'facebook' => [
         'client_id' => env('FACEBOOK_CLIENT_ID'),
         'client_secret' => env('FACEBOOK_CLIENT_SECRET'),
-        'redirect' => '/auth/facebook/callback',
+        'redirect' => env('FACEBOOK_CALLBACK', '/auth/facebook/callback'),
     ],
 
     'twitter-oauth-2' => [
         'client_id' => env('TWITTER_CLIENT_ID'),
         'client_secret' => env('TWITTER_CLIENT_SECRET'),
-        'redirect' => '/auth/twitter-oauth-2/callback',
+        'redirect' => env('TWITTER_CALLBACK', '/auth/twitter-oauth-2/callback'),
     ],
 
     'linkedin-openid' => [
         'client_id' => env('LINKEDIN_CLIENT_ID'),
         'client_secret' => env('LINKEDIN_CLIENT_SECRET'),
-        'redirect' => '/auth/linkedin-openid/callback',
+        'redirect' => env('LINKEDIN_CALLBACK', '/auth/linkedin-openid/callback'),
     ],
 
     'bitbucket' => [
         'client_id' => env('BITBUCKET_CLIENT_ID'),
         'client_secret' => env('BITBUCKET_CLIENT_SECRET'),
-        'redirect' => '/auth/bitbucket/callback',
+        'redirect' => env('BITBUCKET_CALLBACK', '/auth/bitbucket/callback'),
     ],
 
     'gitlab' => [
         'client_id' => env('GITLAB_CLIENT_ID'),
         'client_secret' => env('GITLAB_CLIENT_SECRET'),
-        'redirect' => '/auth/gitlab/callback',
+        'redirect' => env('GITLAB_CALLBACK', '/auth/gitlab/callback'),
     ],
 
     'stripe' => [

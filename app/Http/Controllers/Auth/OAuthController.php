@@ -5,10 +5,10 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Auth\Trait\RedirectAwareTrait;
 use App\Models\OauthLoginProvider;
 use App\Models\User;
+use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
 
 class OAuthController extends RegisterController
@@ -40,12 +40,14 @@ class OAuthController extends RegisterController
             abort(404);
         }
 
-        $oauthUser = Socialite::driver($provider)->user();
+        try {
+            $oauthUser = Socialite::driver($provider)->user();
+        } catch (Exception) {
+            return redirect()->route('login');
+        }
 
         $isRegistration = false;
-
-        $password = Str::random();
-        DB::transaction(function () use ($provider, $oauthUser, $password, &$isRegistration) {
+        DB::transaction(function () use ($provider, $oauthUser, &$isRegistration) {
             $user = User::where('email', $oauthUser->email)->first();
 
             if ($user) {
@@ -53,11 +55,10 @@ class OAuthController extends RegisterController
                     'name' => $oauthUser->name ?? $user->name ?? $oauthUser->nickname,
                 ]);
             } else {
-                $user = User::create([
+                $user = $this->userService->createUser([
                     'name' => $oauthUser->name ?? $oauthUser->nickname ?? '',
                     'email' => $oauthUser->email,
-                    'password' => $password,
-                ]);
+                ], true);
 
                 $isRegistration = true;
             }
@@ -109,7 +110,9 @@ class OAuthController extends RegisterController
                 );
             }
 
-            $user->markEmailAsVerified();
+            if (! $user->hasVerifiedEmail()) {
+                $user->markEmailAsVerified();
+            }
 
             Auth::login($user);
         });
