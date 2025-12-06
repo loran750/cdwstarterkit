@@ -1,6 +1,6 @@
 <?php
 
-namespace Feature\Filament\Dashboard\Resources;
+namespace Test\Feature\Filament\Dashboard\Resources;
 
 use App\Constants\TenancyPermissionConstants;
 use App\Filament\Dashboard\Resources\Teams\TeamResource;
