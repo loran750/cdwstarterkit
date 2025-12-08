@@ -1,27 +1,27 @@
-name: Sync Fork
+#name: Sync Fork
 
-on:
-  schedule:
-    - cron: '0 */6 * * *'  # Toutes les 6 heures
-  workflow_dispatch:  # Permet le déclenchement manuel
+#on:
+#  schedule:
+#    - cron: '0 */6 * * *'  # Toutes les 6 heures
+#  workflow_dispatch:  # Permet le déclenchement manuel
 
-jobs:
-  sync:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+#jobs:
+#  sync:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v4
+#        with:
+#          fetch-depth: 0
 
-      - name: Debug repository object
-        run: echo '${{ toJson(github.event.repository) }}'
+#      - name: Debug repository object
+#        run: echo '${{ toJson(github.event.repository) }}'
       
-      - name: Sync fork
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git remote add upstream ${{ github.event.repository.parent.clone_url }}
-          git fetch upstream
-          git merge upstream/main --allow-unrelated-histories
-          git push origin main
+#      - name: Sync fork
+#        run: |
+#          git config user.name "github-actions[bot]"
+#          git config user.email "github-actions[bot]@users.noreply.github.com"
+#          git remote add upstream ${{ github.event.repository.parent.clone_url }}
+#          git fetch upstream
+#          git merge upstream/main --allow-unrelated-histories
+#          git push origin main
