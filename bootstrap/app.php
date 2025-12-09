@@ -20,6 +20,7 @@ return Illuminate\Foundation\Application::configure(basePath: dirname(__DIR__))
             'sitemapped' => \App\Http\Middleware\Sitemapped::class,
             'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
+            'tenant.context' => \App\Http\Middleware\SetTenantContext::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {})->create();
