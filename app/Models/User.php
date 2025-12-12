@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+
 use App\Notifications\Auth\QueuedVerifyEmail;
 use App\Services\OrderService;
 use App\Services\SubscriptionService;
@@ -10,6 +11,7 @@ use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasTenants;
 use Filament\Panel;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -204,5 +206,10 @@ class User extends Authenticatable implements FilamentUser, HasTenants, MustVeri
             'email' => $this->email,
             'created_at' => $this->created_at->toIso8601String(),
         ];
+    }
+
+    public function scopeIsOnline(Builder $query)
+    {
+        return $query->whereNotNull('last_seen_at')->where('last_seen_at', '>=', now()->subMinutes(10));
     }
 }
