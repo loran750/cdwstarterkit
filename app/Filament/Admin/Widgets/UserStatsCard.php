@@ -7,7 +7,7 @@ use App\Services\OnlineStatusService;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
-class UserRegisteredCard extends StatsOverviewWidget
+class UserStatsCard extends StatsOverviewWidget
 {
     protected function getStats(): array
     {

@@ -4,7 +4,7 @@
     </div>
     <div class="grid grid-cols-6 gap-8">
         <div class="col-span-6">
-            @livewire(\App\Filament\Admin\Widgets\UserRegisteredCard::class, [
+            @livewire(\App\Filament\Admin\Widgets\UserStatsCard::class, [
                 'pageFilters' => $this->filters
             ])
         </div>
